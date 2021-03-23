@@ -2,7 +2,7 @@ import * as React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { SUCCESS_UPDATE, ERROR_UPDATE } from '../constants/Globals';
-import MessageBoxStyle from '../styles/component/MessageBoxStyle';
+import MessageBoxStyle from './../styles/component/MessageBoxStyle';
 
 export function DoneMessageBox(message, SetStatusBadge) {
 	return (

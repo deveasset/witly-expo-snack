@@ -1,13 +1,11 @@
 /* eslint-disable react-native/no-inline-styles */
 import * as React from 'react';
 import { useController, useFormContext } from 'react-hook-form';
-import { StyleSheet, Text, ActivityIndicator, View, Pressable } from 'react-native';
+import { StyleSheet, Text, ActivityIndicator, Image, View, Pressable } from 'react-native';
 
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import ThemeColor from '../constants/ThemeColor';
 import * as ImagePicker from 'expo-image-picker';
-import { ViewImage } from './ViewImage';
-import { Image } from 'react-native-elements';
 import { ExtractFileNameFromURI, validURL } from '../helper/StringUtils';
 import { IsEmptyOrNullOrUndefined, isObjectEmpty } from '../helper/StringUtils';
 
@@ -72,8 +70,8 @@ export const ImagePickerField = ({ error, onValueChange, onBlur, ...imageProps }
 		);
 	};
 
-	const imgSource = IsEmptyOrNullOrUndefined(imageInfo?.Url) ? {} : { uri: imageInfo?.Url };
-
+	const imgUrl = IsEmptyOrNullOrUndefined(imageInfo?.Url) ? imageInfo['Image Url'] : imageInfo?.Url;
+	const imgSource = IsEmptyOrNullOrUndefined(imgUrl) ? {} : { uri: imgUrl };
 	return (
 		<View
 			style={{
@@ -121,13 +119,10 @@ export const ImagePickerField = ({ error, onValueChange, onBlur, ...imageProps }
 							justifyContent: 'space-between'
 						}}>
 						<Image
-							onPress={() => {}}
-							style={{ height: 200, width: 200 }}
-							resizeMode="contain"
 							source={imgSource}
-							PlaceholderContent={
-								<ActivityIndicator color={ThemeColor.PRIMARY} animating={true} size={30} />
-							}
+							resizeMode="center"
+							width="100%"
+							style={{ height: 200, width: 200, borderWidth: 5 }}
 						/>
 						<Pressable onPress={() => setImageInfo({})}>
 							<Icon name="close-circle" size={30} color="red" style={{ zIndex: 1 }} />
@@ -150,7 +145,6 @@ const styles = StyleSheet.create({
 		flex: 5,
 		padding: 6,
 		height: 50,
-		//width: 100,
 		alignItems: 'center'
 	}
 });

@@ -12,11 +12,13 @@ import {
 } from 'react-native';
 import { Table, Row } from 'react-native-table-component';
 import { useController, useFormContext } from 'react-hook-form';
-
-import { InputField } from './InputField';
+import { RestClient } from '../helper/RestClient';
+import AuthContext from './../context/AuthContext';
+import ModuleContext from './../context/ModuleContext';
 import { Button, Input, Overlay } from 'react-native-elements';
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import ThemeColor from '../constants/ThemeColor';
+import { ChecklistLookupAPI } from '../helper/MockWitlyAPI';
 import { InputStyle } from '../styles/component/InputStyle';
 
 export const FormAutoLookupField = (props) => {
@@ -49,6 +51,53 @@ export const AutoLookupField = ({ error, onChangeText, onBlur, ...lookupProps })
 	const { userData } = React.useContext(AuthContext);
 	const [lookupData, setLookupData] = React.useState(null);
 	const [page, setPage] = React.useState(1);
+
+	React.useEffect(() => {
+		const timeoutId = setTimeout(() => {
+			setLookupData(null);
+			//console.log('querying by main input value', value);
+			LookupListCompiler(QueryLookupList({ fieldName: fieldName, queryValue: value, page: page }));
+		}, 800);
+		return () => {
+			clearTimeout(timeoutId);
+		};
+	}, [value]);
+
+	async function QueryLookupList(queryParameters) {
+		setIsLoading(true);
+		let param = new URLSearchParams({
+			token: userData?.Token,
+			page: queryParameters.page,
+			field: queryParameters.fieldName,
+			query: queryParameters.queryValue
+		});
+
+		//return await RestClient().get('/lookup?' + param.toString());
+		return await ChecklistLookupAPI();
+	}
+
+	function LookupListCompiler(PromiseResult) {
+		PromiseResult.then((responseData) => {
+			if (responseData?.ListValue) {
+				let recordsList = responseData?.ListValue.map((item, index) => {
+					if ('id' in item) {
+						delete item.id;
+					}
+					return item;
+				});
+
+				setLookupData({ Header: Object.keys(recordsList[0]), Records: recordsList });
+			}
+			setIsLoading(false);
+		})
+			.catch(function (errorResp) {
+				// handle error
+			})
+			.finally(function () {
+				// always executed
+				setIsLoading(false);
+			});
+	}
 
 	return (
 		<View style={lookupStyle.container}>

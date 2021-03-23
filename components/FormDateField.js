@@ -6,9 +6,10 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { Text, Pressable, StyleSheet } from 'react-native';
 import ThemeColor from '../constants/ThemeColor';
 import { FormatDateString } from '../helper/DateUtils';
+import AuthContext from '../context/AuthContext';
 
 export const FormDateField = (props) => {
-	const { profile } = {};
+	const { profile } = React.useContext(AuthContext);
 	const { name, rules, defaultValue = '', ...dateProps } = props;
 
 	const formContext = useFormContext();
